@@ -50,6 +50,7 @@
 #include <ompl/tools/debug/Visualizer.h>
 #include <ompl/geometric/PathGeometric.h>
 #include <ompl/base/ScopedState.h>
+#include <ompl/base/PlannerData.h>
 
 // MoveIt
 #include <moveit/robot_model/link_model.h>

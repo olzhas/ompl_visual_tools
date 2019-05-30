@@ -55,7 +55,7 @@
 #include <ompl_visual_tools/costs/cost_map_2d_optimization_objective.h>
 
 // MoveIt
-#include <moveit_ompl/model_based_state_space.h>
+#include <moveit/ompl_interface/parameterization/model_based_state_space.h>
 
 namespace ot = ompl::tools;
 namespace ob = ompl::base;
@@ -66,27 +66,27 @@ namespace ompl_visual_tools
 {
 ProjectionVizWindow::ProjectionVizWindow(rviz_visual_tools::RvizVisualToolsPtr visuals,
                                          ompl::base::SpaceInformationPtr si)
-  : name_("projection_viz_window"), visuals_(visuals), si_(si)
+  : name_("projection_viz_window"), visuals_(visuals), VizWindow(si)
 {
   // with this OMPL interface to Rviz all pubs must be manually triggered
   //visuals_->enableBatchPublishing(false);
 
   // Calculate ranges
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
-  ompl::base::RealVectorBounds bounds = mb_state_space->getBounds();
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
+  //ompl::base::RealVectorBounds bounds = mb_state_space->getBounds();
 
   // Only allow up to 6 dimensions
   BOOST_ASSERT_MSG(si_->getStateSpace()->getDimension() > 0 && si_->getStateSpace()->getDimension() <= 6,
                    "Invalid number of dimensions");
 
   // For each dimension
-  for (std::size_t i = 0; i < si_->getStateSpace()->getDimension(); ++i)
-  {
-    range_.push_back(fabs(bounds.high[i] - bounds.low[i]));
-    low_.push_back(bounds.low[i]);
-    BOOST_ASSERT_MSG(range_.back() > 0, "Range is zero");
-  }
+  //for (std::size_t i = 0; i < si_->getStateSpace()->getDimension(); ++i)
+  //{
+  //  range_.push_back(fabs(bounds.high[i] - bounds.low[i]));
+  //  low_.push_back(bounds.low[i]);
+  //  BOOST_ASSERT_MSG(range_.back() > 0, "Range is zero");
+  //}
 
   ROS_DEBUG_STREAM_NAMED(name_, "Initializing ProjectionVizWindow()");
 }
@@ -380,7 +380,7 @@ Eigen::Vector3d ProjectionVizWindow::stateToPoint(const ob::State* state)
   // For each dimension
   for (std::size_t i = 0; i < si_->getStateSpace()->getDimension(); ++i)
   {
-    temp = state->as<moveit_ompl::ModelBasedStateSpace::StateType>()->values[i];
+    temp = state->as<ompl_interface::ModelBasedStateSpace::StateType>()->values[i];
 
     if (i < 3) // regular dimensions
     {

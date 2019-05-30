@@ -48,7 +48,7 @@
 #include <ompl/base/ScopedState.h>
 
 // For converting OMPL state to a MoveIt robot state
-#include <moveit_ompl/model_based_state_space.h>
+#include <moveit/ompl_interface/parameterization/model_based_state_space.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/macros/deprecation.h>
 
@@ -59,7 +59,7 @@ namespace og = ompl::geometric;
 namespace ompl_visual_tools
 {
 MoveItVizWindow::MoveItVizWindow(moveit_visual_tools::MoveItVisualToolsPtr visuals, ompl::base::SpaceInformationPtr si)
-  : name_("moveit_viz_window"), visuals_(visuals), si_(si)
+  : name_("moveit_viz_window"), visuals_(visuals), VizWindow(si)
 {
   // with this OMPL interface to Rviz all pubs must be manually triggered
   //visuals_->enableBatchPublishing(false);
@@ -71,8 +71,8 @@ void MoveItVizWindow::state(const ompl::base::State* state, ot::VizSizes size, o
 {
   // We do not use stateToPoint() because the publishRobotState() function might need the robot state in this function
   visuals_->loadSharedRobotState();
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
   // We must use the root_robot_state here so that the virtual_joint isn't affected
   mb_state_space->copyToRobotState(*visuals_->getRootRobotState(), state);
   Eigen::Affine3d pose = visuals_->getRootRobotState()->getGlobalLinkTransform("right_gripper_target");
@@ -314,8 +314,8 @@ bool MoveItVizWindow::publishRobotState(const ompl::base::State* state)
   // Make sure a robot state is available
   visuals_->loadSharedRobotState();
 
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
 
   // Convert to robot state
   mb_state_space->copyToRobotState(*visuals_->getSharedRobotState(), state);
@@ -336,8 +336,8 @@ bool MoveItVizWindow::publishTrajectoryPath(const ompl::base::PlannerDataPtr& pa
   std::vector<std::vector<geometry_msgs::Point> > paths_msgs(tips.size());  // each tip has its own path of points
   robot_trajectory::RobotTrajectoryPtr robot_trajectory;
 
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
 
   // Optionally save the trajectory
   if (show_trajectory_animated)
@@ -470,8 +470,8 @@ Eigen::Vector3d MoveItVizWindow::stateToPoint(const ob::State* state)
   // Make sure a robot state is available
   visuals_->loadSharedRobotState();
 
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
 
   // Convert to robot state
   mb_state_space->copyToRobotState(*visuals_->getRootRobotState(), state);
@@ -539,8 +539,8 @@ bool MoveItVizWindow::convertPath(const og::PathGeometric& path, const robot_mod
   moveit::core::RobotState state(*visuals_->getSharedRobotState());  // TODO(davetcoleman):do i need to copy this?
 
   // Get correct type of space
-  moveit_ompl::ModelBasedStateSpacePtr mb_state_space =
-      std::static_pointer_cast<moveit_ompl::ModelBasedStateSpace>(si_->getStateSpace());
+  ompl_interface::ModelBasedStateSpacePtr mb_state_space =
+      std::static_pointer_cast<ompl_interface::ModelBasedStateSpace>(si_->getStateSpace());
 
   // Convert solution to MoveIt! format, reversing the solution
   // for (std::size_t i = path.getStateCount(); i > 0; --i)

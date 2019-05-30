@@ -18,7 +18,7 @@
 
   <depend>graph_msgs</depend>
   <depend>moveit_visual_tools</depend>
-  <depend>moveit_ompl</depend>
+  <depend>moveit_planners_ompl</depend>
   <depend>moveit_core</depend>
   <depend>roscpp</depend>
   <depend>roslib</depend>

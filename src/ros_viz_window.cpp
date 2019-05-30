@@ -64,7 +64,7 @@ namespace bnu = boost::numeric::ublas;
 namespace ompl_visual_tools
 {
 ROSVizWindow::ROSVizWindow(rviz_visual_tools::RvizVisualToolsPtr visuals, ompl::base::SpaceInformationPtr si)
-  : name_("ros_viz_window"), visuals_(visuals), si_(si)
+  : name_("ros_viz_window"), visuals_(visuals), VizWindow(si)
 {
   // with this OMPL interface to Rviz all pubs must be manually triggered
   // visuals_->enableBatchPublishing(true);
@@ -457,7 +457,8 @@ Eigen::Vector3d ROSVizWindow::stateToPoint(const ob::State* state)
   temp_eigen_point_.y() = real_state->values[1];
 
   if (si_->getStateSpace()->getDimension() == 2)
-    temp_eigen_point_.z() = level_scale_ * si_->getStateSpace()->getLevel(state);
+  ;
+  //  temp_eigen_point_.z() = level_scale_ * si_->getStateSpace()->getLevel(state);
   else
     temp_eigen_point_.z() = real_state->values[2];
 
